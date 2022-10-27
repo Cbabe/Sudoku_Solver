@@ -5,8 +5,8 @@ class SudokuBoard:
     def __init__(self):
 
         self.board = self.getBoard()
-
-        self.sudokuGraph = SudokuConnections()
+        self.size = 9*9
+        self.sudokuGraph = SudokuConnections(self.size)
         # Maps all the ids to the position in the matrix
         self.mappedGrid = self.__getMappedMatrix()
 
@@ -22,21 +22,36 @@ class SudokuBoard:
         return matrix
 
     def getBoard(self):
+        base = 3
+        side = base*base
 
-        board = [
-            [0, 0, 0, 4, 0, 0, 0, 0, 0],
-            [4, 0, 9, 0, 0, 6, 8, 7, 0],
-            [0, 0, 0, 9, 0, 0, 1, 0, 0],
-            [5, 0, 4, 0, 2, 0, 0, 0, 9],
-            [0, 7, 0, 8, 0, 4, 0, 6, 0],
-            [6, 0, 0, 0, 3, 0, 5, 0, 2],
-            [0, 0, 1, 0, 0, 7, 0, 0, 0],
-            [0, 4, 3, 2, 0, 0, 6, 0, 5],
-            [0, 0, 0, 0, 0, 5, 0, 0, 0]
-        ]
-        board = 9*[9*[0]]
-        print(board)
-        # print(board)
+        def pattern(row, col): return (base*(row % base)+row//base+col) % side
+
+        from random import sample
+        def shuffle(s): return sample(s, len(s))
+        rBase = range(base)
+        print(rBase)
+        rows = [g*base + row for g in shuffle(rBase) for row in shuffle(rBase)]
+        cols = [g*base + col for g in shuffle(rBase) for col in shuffle(rBase)]
+        nums = shuffle(range(1, base*base+1))
+        board = [[nums[pattern(row, col)] for col in cols] for row in rows]
+        squares = side*side
+        empties = squares * 64//81
+        for p in sample(range(squares), empties):
+            board[p//side][p % side] = 0
+        """board = [
+                [0, 0, 0, 4, 0, 0, 0, 0, 0],
+                [4, 0, 9, 0, 0, 6, 8, 7, 0],
+                [0, 0, 0, 9, 0, 0, 1, 0, 0],
+                [5, 0, 4, 0, 2, 0, 0, 0, 9],
+                [0, 7, 0, 8, 0, 4, 0, 6, 0],
+                [6, 0, 0, 0, 3, 0, 5, 0, 2],
+                [0, 0, 1, 0, 0, 7, 0, 0, 0],
+                [0, 4, 3, 2, 0, 0, 6, 0, 5],
+                [0, 0, 0, 0, 0, 5, 0, 0, 0]
+            ]
+            # print(board)
+            """
         return board
 
     def printBoard(self):
@@ -113,7 +128,7 @@ class SudokuBoard:
             return False
 
         for i in range(1, self.sudokuGraph.graph.totalV+1):
-            if color[i] == c and self.sudokuGraph.graph.isNeighbour(v, i):
+            if color[i] == c and self.sudokuGraph.graph.isNeighbour(v, i, self.size):
                 return False
         return True
 

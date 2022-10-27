@@ -83,11 +83,11 @@ class Graph:
         self.allNodes[src].addNeighbour(self.allNodes[dst], wt)
         self.allNodes[dst].addNeighbour(self.allNodes[src], wt)
 
-    def isNeighbour(self, u, v):
+    def isNeighbour(self, u, v, total):
         """
         check neighbour exists or not
         """
-        if u >= 1 and u <= 81 and v >= 1 and v <= 81 and u != v:
+        if u >= 1 and u <= total and v >= 1 and v <= total and u != v:
             if v in self.allNodes[u].getConnections():
                 return True
         return False
