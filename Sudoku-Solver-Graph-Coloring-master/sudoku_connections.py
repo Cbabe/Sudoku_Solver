@@ -1,14 +1,15 @@
 from graph import Graph
+import math
 
 
 class SudokuConnections:
-    def __init__(self):  # constructor
+    def __init__(self, size):  # constructor
 
         self.graph = Graph()  # Graph Object
 
-        self.rows = 9
-        self.cols = 9
-        self.total_blocks = self.rows*self.cols  # 81
+        self.rows = int(math.sqrt(size))
+        self.cols = int(math.sqrt(size))
+        self.total_blocks = int(self.rows*self.cols)  # 81
 
         self.__generateGraph()  # Generates all the nodes
         self.connectEdges()  # connects all the nodes acc to sudoku constraints
@@ -55,8 +56,8 @@ class SudokuConnections:
 
         head_connections = dict()  # head : connections
 
-        for row in range(9):
-            for col in range(9):
+        for row in range(self.rows):
+            for col in range(self.cols):
 
                 head = matrix[row][col]  # id of the node
                 connections = self.__whatToConnect(matrix, row, col)
@@ -93,13 +94,13 @@ class SudokuConnections:
         block = []
 
         # ROWS
-        for c in range(cols+1, 9):
+        for c in range(cols+1, self.cols):
             row.append(matrix[rows][c])
 
         connections["rows"] = row
 
         # COLS
-        for r in range(rows+1, 9):
+        for r in range(rows+1, self.rows):
             col.append(matrix[r][cols])
 
         connections["cols"] = col
